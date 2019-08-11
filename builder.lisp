@@ -13,7 +13,9 @@
 ;;GNU General Public License for more details.
 
 ;;You should have received a copy of the GNU General Public License
-;;along with this program.  If not, see <http://www.gnu.org/licenses/>.(in-package :cl-gtk-frank.builder)
+;;along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(in-package :cl-gtk-frank.builder)
 
 (defclass glade-object ()
   ((name :initform nil)
@@ -109,13 +111,15 @@
       (let ((widget-map (gensym));(list (cons static-id-string widget-instance) ...)
             (connect-result (gensym));(list (cons static-id-string (list (cons signal-symbol handler-id) ...)) ...)
             (bodyresult (gensym))
-            (id-inst-cons (gensym)))
-        `(let ((,builder (build-interface ,filename)))
+            (id-inst-cons (gensym))
+            (e-filename (gensym)))
+        `(let* ((,e-filename ,(eval filename))
+                (,builder (build-interface ,e-filename)))
            (multiple-value-bind (,widget-map ,bodyresult)
                (progn
                  ,@body)
              (let ((,connect-result
-                    (build-interface-connect-signals ,builder ,filename ,instance-id)))
+                    (build-interface-connect-signals ,builder ,e-filename ,instance-id)))
                (dolist (,id-inst-cons ,widget-map)
                  (register-widget (cdr ,id-inst-cons)
                                   ,instance-id
@@ -125,9 +129,11 @@
                                   ,connect-result :key #'car :test #'equal)))))
              ,bodyresult)))
       
-      (let ((bodyresult (gensym)))
-        `(let* ((,builder (build-interface ,filename))
+      (let ((bodyresult (gensym))
+            (e-filename (gensym)))
+        `(let* ((,e-filename ,(eval filename))
+                (,builder (build-interface ,e-filename))
                 (,bodyresult (progn
                                ,@body)))
-           (build-interface-connect-signals ,builder ,filename ,instance-id)
+           (build-interface-connect-signals ,builder ,e-filename ,instance-id)
            ,bodyresult))))
