@@ -16,7 +16,7 @@ The CLOS class 'widget' is intended to be the base class of every object which c
 
 ## Glade integration
 
-There is macro, 'with-builder', for using Glade files conveniently. In Glade, you can build the static part of the user interface. Gtk already provides a function for reading those files, and generating widgets from it. 'with-builder' is a wrapper for that, and also provides functions to connect signals to widgets and to register the corresponding CLOS objects, while storing the handler ids of the connected signals so that they can be blocked and unblocked.
+There is macro, 'with-build-interface', for using Glade files conveniently. In Glade, you can build the static part of the user interface. Gtk already provides a function for reading those files, and generating widgets from it. 'with-builder' is a wrapper for that, and also provides functions to connect signals to widgets and to register the corresponding CLOS objects, while storing the handler ids of the connected signals so that they can be blocked and unblocked.
 
 Registering a widget uses the instance id set in Glade, so each widget instance that you interact with in LISP needs to be given a unique id in Glade. This instance id can also be used to retrieve the (pointer to the) widget within with-builder, so that it can be stored somewhere and used later in calls to Gtk. This isn't always needed. To receive clicks from a button, it is enough to register the widget. But to, say, dynamically make it unclickable, the widget itself must be retrieved and stored so that it can be used in a call to gtk-widget-set-sensitive.
 
